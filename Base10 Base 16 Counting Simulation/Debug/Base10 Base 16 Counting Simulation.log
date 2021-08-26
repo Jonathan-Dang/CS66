@@ -1,0 +1,4 @@
+﻿  Source.cpp
+C:\Users\pocke\source\repos\Base10 Base 16 Counting Simulation\Source.cpp(152,22): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\pocke\source\repos\Base10 Base 16 Counting Simulation\Source.cpp(166,35): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  Base10 Base 16 Counting Simulation.vcxproj -> C:\Users\pocke\source\repos\Base10 Base 16 Counting Simulation\Debug\Base10 Base 16 Counting Simulation.exe
