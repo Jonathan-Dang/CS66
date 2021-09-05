@@ -59,6 +59,7 @@ string* toDecimal(Value input);
 string* toHex(Value input);
 string toBinary(Value input);
 string* toOctal(Value input);
+string twosCompliment(string input);
 
 int main()
 {
@@ -187,69 +188,29 @@ string* toDecimal(Value input)
 	string* arr = new string[2];
 
 	string binaryProxy = toBinary(input);
+	string negativeProxy = twosCompliment(binaryProxy);
 
-	if (binaryProxy[0] == '1')
+	int signedNumber = 0, unsignedNumber = 0;
+	int t = binaryProxy.length() - 1;
+	for (int i = 0; i < binaryProxy.length(); i++)
 	{
-		string negativeBinary;
-
-		for (int i = 0; i < binaryProxy.length(); i++) //unsigned creation
+		if (binaryProxy[i] == '1')
 		{
-			if (binaryProxy[i] == '0')
-			{
-				negativeBinary += '1';
-			}
-			else
-				negativeBinary += '0';
+			signedNumber += pow(2, t);
+		}
+		if (negativeProxy[i] == '1')
+		{
+			unsignedNumber += pow(2, t);
 		}
 
-		for (int i = negativeBinary.length() - 1; i >= 0; i--) //Adding 1
-		{
-			if (negativeBinary[i] == '1')
-			{
-				negativeBinary[i] = '0';
-			}// Continue the Algorithmn
-			else
-			{
-				negativeBinary[i] = '1';
-				break;
-			}
-		}//Finished Unsigned Negative Creation
+		t--;
+	}
 
-		int signedNumber = 0, unsignedNumber = 0;
-		int t = binaryProxy.length() - 1;
-		for (int i = 0; i < binaryProxy.length(); i++)
-		{
-			if (binaryProxy[i] == '1')
-			{
-				signedNumber += pow(2, t);
-			}
-			if (negativeBinary[i] == '1')
-			{
-				unsignedNumber += pow(2, t);
-			}
-
-			t--;
-		}
-
-		string* temp = arr;
-		*temp = to_string(signedNumber);
-		temp++;
-		*temp = to_string(-unsignedNumber);
-		return arr;
-	}//Signed and Unsigned
-	else
-	{
-		int signedNumber = 0;
-		for (int i = binaryProxy.length() - 1; i >= 0; i--)
-		{
-			if (binaryProxy[i] == '1')
-			{
-				signedNumber += pow(2, i);
-			}
-		}
-		*arr = to_string(signedNumber);
-		return arr;
-	}//Only Signed
+	string* temp = arr;
+	*temp = to_string(signedNumber);
+	temp++;
+	*temp = to_string(-unsignedNumber);
+	return arr;
 }
 
 string* toHex(Value input)
@@ -328,7 +289,7 @@ string toBinary(Value input)
 	{
 	case(1):
 	{
-		int rawData = stoi(input._data);
+		int rawData = stoi(inputData);
 		vector<int> hold;
 		for (int i = 0; rawData > 0; i++)
 		{
@@ -337,8 +298,6 @@ string toBinary(Value input)
 		}
 
 		string output;
-		if (negative)
-			output += '-';
 		for (int i = hold.size() - 1; i >= 0; i--)
 		{
 			output += to_string(hold.at(i));
@@ -346,27 +305,7 @@ string toBinary(Value input)
 
 		if (negative)
 		{
-			for (int i = 0; i < output.length(); i++)
-			{
-				if (output[i] == '1')
-					output[i] = '0';
-				else
-					output[i] = '1';
-			}
-
-			for (int i = output.length() - 1; i >= 0; i--) //Adding 1
-			{
-				if (output[i] == '1')
-				{
-					output[i] = '0';
-				}// Continue the Algorithmn
-				else
-				{
-					output[i] = '1';
-					break;
-				}
-			}
-
+			output = twosCompliment(output);
 		}
 
 		return output;
@@ -490,7 +429,7 @@ string* toOctal(Value input)
 
 	int signedNumber = stoi(*temp);
 	int unsignedNumber = 0;
-	if (temp + 1 != nullptr)
+	if (*(temp + 1) != "")
 		unsignedNumber = stoi(*(temp + 1));
 
 	int octalSigned = 0, octalUnsigned = 0, countS = 1, countU = 1;
@@ -516,6 +455,32 @@ string* toOctal(Value input)
 	*temp = to_string(octalSigned);
 	*(temp + 1) = to_string(octalUnsigned);
 
+	return output;
+}
+
+string twosCompliment(string input)
+{
+	string output = input;
+	for (int i = 0; i < output.length(); i++) // 2's Compliment
+	{
+		if (output[i] == '1')
+			output[i] = '0';
+		else
+			output[i] = '1';
+	}
+
+	for (int i = output.length() - 1; i >= 0; i--) //Adding 1
+	{
+		if (output[i] == '1')
+		{
+			output[i] = '0';
+		}// Continue the Algorithmn
+		else
+		{
+			output[i] = '1';
+			break;
+		}
+	}
 	return output;
 }
 
@@ -637,3 +602,73 @@ string toOctal(Value input)
 
 	return output;
 }*/
+
+/*
+TESTING:
+====================BEGIN=====================
+Please insert a value in either Binary, Decimal, Octal, or Hex: -123
+[D]ECIMAL | B[I]NARY | [O]CTAL | [H]EX
+Please indicate which of the 4 bases you are using by entering in the marked character: D
+Here are the translated Numbers from your entry of -123
+[Binary] 0000101
+[] 0
+[] 0
+[Octal] 5
+[Octal] -173
+[Hex] 5
+[Hex] -B7
+To e[X]it the program, Enter 'X', enter anything else to continue: 1234567890
+Please insert a value in either Binary, Decimal, Octal, or Hex: [D]ECIMAL | B[I]NARY | [O]CTAL | [H]EX
+Please indicate which of the 4 bases you are using by entering in the marked character: D
+Here are the translated Numbers from your entry of 234567890
+[Binary] 1101111110110011100011010010
+[] 0
+[] 0
+[Octal] 1576634322
+[Octal] -201143456
+[Hex] 2D83BFD
+[Hex] -E27C402
+To e[X]it the program, Enter 'X', enter anything else to continue: a
+Please insert a value in either Binary, Decimal, Octal, or Hex: 173
+[D]ECIMAL | B[I]NARY | [O]CTAL | [H]EX
+Please indicate which of the 4 bases you are using by entering in the marked character: O
+Here are the translated Numbers from your entry of 173
+[Binary] 001111011
+[Decimal] 123
+[Decimal] -389
+[] 0
+[] 0
+[Hex] B7
+[Hex] -581
+To e[X]it the program, Enter 'X', enter anything else to continue: s
+Please insert a value in either Binary, Decimal, Octal, or Hex: 1A
+[D]ECIMAL | B[I]NARY | [O]CTAL | [H]EX
+Please indicate which of the 4 bases you are using by entering in the marked character: H
+Here are the translated Numbers from your entry of 1A
+[Binary] 00011010
+[Decimal] 26
+[Decimal] -230
+[Octal] 32
+[Octal] -346
+[] 0
+[] 0
+To e[X]it the program, Enter 'X', enter anything else to continue: k
+Please insert a value in either Binary, Decimal, Octal, or Hex: -1A
+[D]ECIMAL | B[I]NARY | [O]CTAL | [H]EX
+Please indicate which of the 4 bases you are using by entering in the marked character: H
+Here are the translated Numbers from your entry of -1A
+[Binary] 111100110
+[Decimal] 486
+[Decimal] -26
+[Octal] 746
+[Octal] -32
+[] 0
+[] 0
+To e[X]it the program, Enter 'X', enter anything else to continue: X
+=====================END======================
+
+C:\Users\pocke\source\repos\Base10 Base 16 Counting Simulation\Debug\Base10 Base 16 Counting Simulation.exe (process 17676) exited with code 0.
+To automatically close the console when debugging stops, enable Tools->Options->Debugging->Automatically close the console when debugging stops.
+Press any key to close this window . . .
+
+*/
