@@ -1,14 +1,17 @@
 //Author: Jonathan Dang
 //Simulation of Base 10, Base 16, and Base 8 Translations
 //Professor: Sassan Barkeshli
-//Date: 8/25/2021
+//Date: 9/5/2021
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
 
-const char base16[16] = { '0','1','2','3','4','5','6','7'
-							,'8','9','A','B','C','D','E','F' };
+const string octal[8] = { "000", "001", "010", "011","100","101","110","111" };
+
+const string Hex[16] = { "0000", "0001", "0010","0011","0100","0101","0110","0111"
+							,"1000","1001","1010","1011","1100","1101","1110","1111" };
+
 struct Value
 {
 	Value() : _data("0"), _type(-1) {}
@@ -52,17 +55,17 @@ struct Value
 	//Hex: 3
 };
 
-string toDecimal(Value input);
-string toHex(Value input);
+string* toDecimal(Value input);
+string* toHex(Value input);
 string toBinary(Value input);
-string toOctal(Value input);
+string* toOctal(Value input);
 
 int main()
 {
 	cout << "====================BEGIN=====================\n";
 	while (true)
 	{
-		cout << "Please insert a value in either Binary, Base10, Octal, or Hex {MUST BE A SIGNED VALUE}: ";
+		cout << "Please insert a value in either Binary, Decimal, Octal, or Hex: ";
 		string input;
 		cin >> input;
 		cout << "[D]ECIMAL | B[I]NARY | [O]CTAL | [H]EX\n";
@@ -71,50 +74,92 @@ int main()
 		cin >> type;
 
 		Value in(input, -1);
-		Value output[3];
+		Value output[7];
+		//0 : Binary
+		//1 : signed Decimal
+		//2 : unsigned Decimal
+		//3 : signed Octal
+		//4 : unsigned Octal
+		//5 : signed Hex
+		//6 : unsigned Hex
 
 		switch (type)
 		{
 		case('d'):
 		case('D'):
 		{
+			//Needs: Binary, Octal, Hex
 			in._type = 1;
-			output[0] = Value(toBinary(in), 0);
-			output[1] = Value(toOctal(in), 2);
-			output[2] = Value(toHex(in), 3);
+			string* temp = toOctal(in);
+			output[0] = Value(toBinary(in),0);
+			output[3] = Value(*temp,2);
+			output[4] = Value(*(temp + 1),2);
+			delete[] temp;
+			temp = toHex(in);
+			output[5] = Value(*temp,3);
+			output[6] = Value(*(temp + 1),3);
+			delete[] temp;
 			break;
 		}//Decimal
 		case('i'):
 		case('I'):
 		{
+			//Needs: Decimal, Octal, Hex
 			in._type = 0;
-			output[0] = Value(toDecimal(in), 1);
-			output[1] = Value(toOctal(in), 2);
-			output[2] = Value(toHex(in), 3);
+			string* temp = toDecimal(in);
+			output[1] = Value(*temp,1);
+			output[2] = Value(*(temp + 1),1);
+			delete[] temp;
+			temp = toOctal(in);
+			output[3] = Value(*temp,2);
+			output[4] = Value(*(temp + 1),2);
+			delete[] temp;
+			temp = toHex(in);
+			output[5] = Value(*temp,3);
+			output[6] = Value(*(temp + 1),3);
+			delete[] temp;
 			break;
 		}//Binary
 		case('o'):
 		case('O'):
 		{
+			//Needs: Decimal, Binary, Hex
 			in._type = 2;
-			output[0] = Value(toBinary(in), 0);
-			output[1] = Value(toDecimal(in), 1);
-			output[2] = Value(toHex(in), 3);
+
+			output[0] = Value(toBinary(in),0);
+			string* temp = toDecimal(in);
+			output[1] = Value(*temp,1);
+			output[2] = Value(*(temp + 1),1);
+			delete[] temp;
+			temp = toHex(in);
+			output[5] = Value(*temp,3);
+			output[6] = Value(*(temp + 1),3);
+			delete[] temp;
+
 			break;
 		}//Octal
 		case('h'):
 		case('H'):
 		{
+			//Needs: Binary, Decimal, Octal
 			in._type = 3;
-			output[0] = Value(toBinary(in), 0);
-			output[2] = Value(toOctal(in), 2);
-			output[1] = Value(toDecimal(in), 1);
+
+			output[0] = Value(toBinary(in),0);
+			string* temp = toDecimal(in);
+			output[1] = Value(*temp,1);
+			output[2] = Value(*(temp + 1),1);
+			delete[] temp;
+			temp = toOctal(in);
+			output[3] = Value(*temp,2);
+			output[4] = Value(*(temp + 1),2);
+			delete[] temp;
+
 			break;
 		}//Hex
 		}//switch
 
 		cout << "Here are the translated Numbers from your entry of " << input << endl;
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			cout << output[i] << endl;
 		}
@@ -135,7 +180,347 @@ int main()
 	//Decimal: 1
 	//Octal: 2
 	//Hex: 3
-string toDecimal(Value input)
+
+//Iteration 2
+string* toDecimal(Value input)
+{
+	string* arr = new string[2];
+
+	string binaryProxy = toBinary(input);
+
+	if (binaryProxy[0] == '1')
+	{
+		string negativeBinary;
+
+		for (int i = 0; i < binaryProxy.length(); i++) //unsigned creation
+		{
+			if (binaryProxy[i] == '0')
+			{
+				negativeBinary += '1';
+			}
+			else
+				negativeBinary += '0';
+		}
+
+		for (int i = negativeBinary.length() - 1; i >= 0; i--) //Adding 1
+		{
+			if (negativeBinary[i] == '1')
+			{
+				negativeBinary[i] = '0';
+			}// Continue the Algorithmn
+			else
+			{
+				negativeBinary[i] = '1';
+				break;
+			}
+		}//Finished Unsigned Negative Creation
+
+		int signedNumber = 0, unsignedNumber = 0;
+		int t = binaryProxy.length() - 1;
+		for (int i = 0; i < binaryProxy.length(); i++)
+		{
+			if (binaryProxy[i] == '1')
+			{
+				signedNumber += pow(2, t);
+			}
+			if (negativeBinary[i] == '1')
+			{
+				unsignedNumber += pow(2, t);
+			}
+
+			t--;
+		}
+
+		string* temp = arr;
+		*temp = to_string(signedNumber);
+		temp++;
+		*temp = to_string(-unsignedNumber);
+		return arr;
+	}//Signed and Unsigned
+	else
+	{
+		int signedNumber = 0;
+		for (int i = binaryProxy.length() - 1; i >= 0; i--)
+		{
+			if (binaryProxy[i] == '1')
+			{
+				signedNumber += pow(2, i);
+			}
+		}
+		*arr = to_string(signedNumber);
+		return arr;
+	}//Only Signed
+}
+
+string* toHex(Value input)
+{
+	string* arr = toDecimal(input);
+	string* temp = arr;
+
+	int signedNumber = stoi(*temp);
+	int unsignedNumber = 0;
+	if (temp + 1 != nullptr)
+	{
+		unsignedNumber = stoi(*(temp + 1));
+		unsignedNumber *= -1;
+	}
+		
+
+
+	string outputS, outputU;
+	int i = 0;
+	while (signedNumber != 0) 
+	{
+		int temp = 0;
+		temp = signedNumber % 16;
+
+		if (temp < 10) {
+			outputS += temp + 48;
+			i++;
+		}
+		else {
+			outputS += temp + 55;
+			i++;
+		}
+
+		signedNumber /= 16;
+	}
+
+	while (unsignedNumber != 0)
+	{
+		int temp = 0;
+		temp = unsignedNumber % 16;
+
+		if (temp < 10) {
+			outputU += temp + 48;
+			i++;
+		}
+		else {
+			outputU += temp + 55;
+			i++;
+		}
+
+		unsignedNumber /= 16;
+	}
+
+	string* output = new string[2];
+	temp = output;
+	*temp = outputS;
+	*(temp + 1) = '-' + outputU;
+	return output;
+}
+
+string toBinary(Value input)
+{
+	//Identity section | faster processing
+	if (input._type == 0)
+		return input._data;
+	
+	bool negative = false;
+	string inputData = input._data;
+	if (input._data[0] == '-')
+	{
+		negative = true;
+		inputData = inputData.substr(1);
+	}
+
+	switch (input._type)
+	{
+	case(1):
+	{
+		int rawData = stoi(input._data);
+		vector<int> hold;
+		for (int i = 0; rawData > 0; i++)
+		{
+			hold.push_back(rawData % 2);
+			rawData /= 2;
+		}
+
+		string output;
+		if (negative)
+			output += '-';
+		for (int i = hold.size() - 1; i >= 0; i--)
+		{
+			output += to_string(hold.at(i));
+		}
+
+		if (negative)
+		{
+			for (int i = 0; i < output.length(); i++)
+			{
+				if (output[i] == '1')
+					output[i] = '0';
+				else
+					output[i] = '1';
+			}
+
+			for (int i = output.length() - 1; i >= 0; i--) //Adding 1
+			{
+				if (output[i] == '1')
+				{
+					output[i] = '0';
+				}// Continue the Algorithmn
+				else
+				{
+					output[i] = '1';
+					break;
+				}
+			}
+
+		}
+
+		return output;
+	}//Case 1 Decimal
+	case(2):
+	{
+		string output;
+		if (negative)
+			output += '-';
+		for (int i = 0; i < inputData.length(); i++)
+		{
+			output += octal[inputData[i] - '0'];
+		}
+
+		if (negative)
+		{
+			for (int i = 0; i < output.length(); i++)
+			{
+				if (output[i] == '1')
+					output[i] = '0';
+				else
+					output[i] = '1';
+			}
+
+			for (int i = output.length() - 1; i >= 0; i--) //Adding 1
+			{
+				if (output[i] == '1')
+				{
+					output[i] = '0';
+				}// Continue the Algorithmn
+				else
+				{
+					output[i] = '1';
+					break;
+				}
+			}
+
+		}
+
+		return output;
+		//
+	}//Case 2 Octal
+	case(3):
+	{
+		//Things to check:
+		//If char, then follow A-F
+		//4 bits
+		string output;
+		if (negative)
+			output += '-';
+		for (int i = 0; i < inputData.length(); i++)
+		{
+			if (inputData[i] >= 'A' && inputData[i] <= 'F')
+			{
+				switch (inputData[i])
+				{
+				case('A'):
+					output += Hex[10];
+					break;
+				case('B'):
+					output += Hex[11];
+					break;
+				case('C'):
+					output += Hex[12];
+					break;
+				case('D'):
+					output += Hex[13];
+					break;
+				case('E'):
+					output += Hex[14];
+					break;
+				case('F'):
+					output += Hex[15];
+					break;
+				default:
+					break;
+				}
+			}
+			else
+			{
+				output += Hex[inputData[i] - '0'];
+			}
+		}
+
+		if (negative)
+		{
+			for (int i = 0; i < output.length(); i++)
+			{
+				if (output[i] == '1')
+					output[i] = '0';
+				else
+					output[i] = '1';
+			}
+
+			for (int i = output.length() - 1; i >= 0; i--) //Adding 1
+			{
+				if (output[i] == '1')
+				{
+					output[i] = '0';
+				}// Continue the Algorithmn
+				else
+				{
+					output[i] = '1';
+					break;
+				}
+			}
+
+		}
+
+		return output;
+	}//Case 3 Hex
+	default:
+		return "";
+	}
+}
+
+string* toOctal(Value input)
+{
+	string* arr = toDecimal(input);
+	string* temp = arr;
+
+	int signedNumber = stoi(*temp);
+	int unsignedNumber = 0;
+	if (temp + 1 != nullptr)
+		unsignedNumber = stoi(*(temp + 1));
+
+	int octalSigned = 0, octalUnsigned = 0, countS = 1, countU = 1;
+
+	while (signedNumber != 0)
+	{
+		int rem = signedNumber % 8;
+		octalSigned += rem * countS;
+		countS *= 10;
+		signedNumber /= 8;
+	}
+
+	while (unsignedNumber != 0)
+	{
+		int rem = unsignedNumber % 8;
+		octalUnsigned += rem * countU;
+		countU *= 10;
+		unsignedNumber /= 8;
+	}
+
+	string* output = new string[2];
+	temp = output;
+	*temp = to_string(octalSigned);
+	*(temp + 1) = to_string(octalUnsigned);
+
+	return output;
+}
+
+//Iteration 1
+/*string toDecimal(Value input)
 {
 	string output;
 
@@ -251,4 +636,4 @@ string toOctal(Value input)
 	}
 
 	return output;
-}
+}*/
