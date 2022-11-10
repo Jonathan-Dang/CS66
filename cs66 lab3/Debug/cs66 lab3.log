@@ -1,0 +1,10 @@
+﻿  main.cpp
+C:\Users\pocke\source\repos\includes\BaseConversion.h(71,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\pocke\source\repos\includes\BaseConversion.h(75,29): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\pocke\source\repos\includes\BaseConversion.h(79,31): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\pocke\source\repos\includes\BaseConversion.h(194,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\pocke\source\repos\includes\BaseConversion.h(201,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\pocke\source\repos\includes\BaseConversion.h(235,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\pocke\source\repos\includes\BaseConversion.h(271,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\pocke\source\repos\includes\BaseConversion.h(340,20): warning C4018: '<': signed/unsigned mismatch
+  cs66 lab3.vcxproj -> C:\Users\pocke\source\repos\cs66 lab3\Debug\cs66 lab3.exe
