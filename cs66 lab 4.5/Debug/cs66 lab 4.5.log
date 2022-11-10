@@ -1,0 +1,7 @@
+﻿  Assembling IntegerExpressionCalculation.asm...
+IntegerExpressionCalculation.asm(5): warning A4011: multiple .MODEL directives found : .MODEL ignored
+IntegerExpressionCalculation.asm(20): error A2022: instruction operands must be the same size
+IntegerExpressionCalculation.asm(21): error A2022: instruction operands must be the same size
+IntegerExpressionCalculation.asm(24): error A2022: instruction operands must be the same size
+IntegerExpressionCalculation.asm(25): error A2022: instruction operands must be the same size
+D:\Visual Studio\MSBuild\Microsoft\VC\v160\BuildCustomizations\masm.targets(70,5): error MSB3721: The command "ml.exe /c /nologo /Zi /Fo"Debug\IntegerExpressionCalculation.obj" /I "C:\Irvine7th" /W3 /errorReport:prompt  /TaIntegerExpressionCalculation.asm" exited with code 1.
